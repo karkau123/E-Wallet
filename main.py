@@ -258,3 +258,11 @@ def create_country_info(country_info: schemas.add_country, db: Session = Depends
         return crud.create_country_info(db=db, country_info=country_info)
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=str(e))
+
+
+@app.get("/country_info/{country_id}", response_model=schemas.Country_Info)
+def read_country_info(country_id: int, db: Session = Depends(get_db)):
+    db_country_info = crud.get_country_info(db=db, country_id=country_id)
+    if db_country_info is None:
+        raise HTTPException(status_code=404, detail="Country info not found")
+    return db_country_info
