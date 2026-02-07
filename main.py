@@ -177,4 +177,25 @@ def read_members_api(skip: int = 0, limit: int = 100, db: Session = Depends(get_
         )
         for row in members
     ]
-  
+  # get a specific member by id
+@app.get("/members/{member_id}", response_model=schemas.Member)
+def read_member_api(member_id: int, db: Session = Depends(get_db)):
+    query = "SELECT * FROM Members WHERE Member_id = %s"
+    mycursor.execute(query, (member_id,))
+    member = mycursor.fetchone()
+    if member is None:
+        raise HTTPException(status_code=404, detail="Member not found")
+    return schemas.Member(
+           Member_id=member[0],
+            First_name=member[1],
+            Middle_name=member[2],
+            Last_name=member[3],
+            Email=member[4],
+            Country_Id=member[5],
+            Contact_Number=member[6],
+            username=member[7],
+            password=member[8],
+            account_status=member[9],
+            processed_by_id =member[10]
+        )
+    
